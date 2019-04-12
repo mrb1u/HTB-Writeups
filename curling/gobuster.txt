@@ -1,0 +1,36 @@
+Curling:80/
+
+=====================================================
+Gobuster v2.0.1              OJ Reeves (@TheColonial)
+=====================================================
+[+] Mode         : dir
+[+] Url/Domain   : http://10.10.10.150/
+[+] Threads      : 10
+[+] Wordlist     : /usr/share/dirb/wordlists/common.txt
+[+] Status codes : 200,204,301,302,307,403
+[+] Timeout      : 10s
+=====================================================
+2019/04/11 17:15:29 Starting gobuster
+=====================================================
+/.hta (Status: 403)
+/.htaccess (Status: 403)
+/.htpasswd (Status: 403)
+/administrator (Status: 301)
+/bin (Status: 301)
+/cache (Status: 301)
+/components (Status: 301)
+/images (Status: 301)
+/includes (Status: 301)
+/index.php (Status: 200)
+/language (Status: 301)
+/layouts (Status: 301)
+/libraries (Status: 301)
+/media (Status: 301)
+/modules (Status: 301)
+/plugins (Status: 301)
+/server-status (Status: 403)
+/templates (Status: 301)
+/tmp (Status: 301)
+=====================================================
+2019/04/01 17:16:57 Finished
+=====================================================

@@ -1,0 +1,43 @@
+********************************************************
+ Testing DAV connection
+OPEN            SUCCEED:                http://granny.htb
+********************************************************
+NOTE    Random string for this session: DcKtLl4hiHEKy
+********************************************************
+ Creating directory
+MKCOL           SUCCEED:                Created http://granny.htb/DavTestDir_DcKtLl4hiHEKy
+********************************************************
+ Sending test files
+PUT     jsp     SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.jsp
+PUT     txt     SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.txt
+PUT     shtml   FAIL
+PUT     php     SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.php
+PUT     cgi     FAIL
+PUT     jhtml   SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.jhtml
+PUT     html    SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.html
+PUT     cfm     SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.cfm
+PUT     pl      SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.pl
+PUT     aspx    FAIL
+PUT     asp     FAIL
+********************************************************
+ Checking for test file execution
+EXEC    jsp     FAIL
+EXEC    txt     SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.txt
+EXEC    php     FAIL
+EXEC    jhtml   FAIL
+EXEC    html    SUCCEED:        http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.html
+EXEC    cfm     FAIL
+EXEC    pl      FAIL
+
+********************************************************
+/usr/bin/davtest Summary:
+Created: http://granny.htb/DavTestDir_DcKtLl4hiHEKy
+PUT File: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.jsp
+PUT File: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.txt
+PUT File: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.php
+PUT File: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.jhtml
+PUT File: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.html
+PUT File: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.cfm
+PUT File: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.pl
+Executes: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.txt
+Executes: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.html

